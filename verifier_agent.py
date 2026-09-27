@@ -24,8 +24,9 @@ class NewsVerifierAgent:
         self.endpoint = "https://api.groq.com/openai/v1/chat/completions"
         self.model = "openai/gpt-oss-120b"
 
+        author_name = os.getenv("AUTHOR_NAME", "Executive")
         self.system_prompt = (
-            "You are the Senior Executive Fact-Checking & Verification Agent for Ashwanth Karibindi's Executive LinkedIn Analysis Series.\n\n"
+            f"You are the Senior Executive Fact-Checking & Verification Agent for {author_name}'s Executive LinkedIn Analysis Series.\n\n"
             "Your responsibility is to verify the factual integrity, accuracy, and credible attribution of a proposed executive LinkedIn post before publishing.\n\n"
             "==================================================\n"
             "VERIFICATION METHODOLOGY\n"

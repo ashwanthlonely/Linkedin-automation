@@ -15,6 +15,8 @@ if sys.stdout.encoding != 'utf-8':
 
 load_dotenv()
 
+DEFAULT_AUTHOR_TAGS = (os.getenv("AUTHOR_TAGS") or "#ExecutiveInsights #IndustryLeadership").strip()
+
 def to_unicode_bold(text):
     """Convert standard ASCII alphanumeric text into Unicode Sans-Serif Bold characters for native LinkedIn bolding."""
     res = []
@@ -47,7 +49,7 @@ WEEKLY_TOPICS = {
             "- India: Cabinet-approved ₹10,372 Crore IndiaAI Mission funding 10,000+ GPUs sovereign compute capacity under MeitY (Source: Press Information Bureau India)\n"
             "- India: Enterprise GenAI solution architectures integrating foundation models into ERP/enterprise systems (Source: MeitY / NASSCOM)"
         ),
-        "hashtags": "#AshwanthKaribindi #Bristlecone #GenAI #SAP #EnterpriseAI #Innovation #Leadership #GlobalEconomy #India #ArtificialIntelligence #CloudCompute"
+        "hashtags": f"{DEFAULT_AUTHOR_TAGS} #GenAI #SAP #EnterpriseAI #Innovation #Leadership #GlobalEconomy #India #ArtificialIntelligence #CloudCompute"
     },
     "Tuesday": {
         "title": "AUTO, EV & MOBILITY INNOVATION",
@@ -68,7 +70,7 @@ WEEKLY_TOPICS = {
             "- India: Battery-as-a-Service (BaaS) and battery swapping network expansion across urban logistics fleets (Source: NITI Aayog / PIB India)\n"
             "- NEGATIVE CONSTRAINT: DO NOT invent joint ventures between competing automakers (e.g. no VW-GM joint venture). Only cite actual OEM programs."
         ),
-        "hashtags": "#AshwanthKaribindi #Bristlecone #GenAI #SAP #EnterpriseAI #Innovation #Leadership #GlobalEconomy #India #EV #Automotive #Mobility"
+        "hashtags": f"{DEFAULT_AUTHOR_TAGS} #GenAI #SAP #EnterpriseAI #Innovation #Leadership #GlobalEconomy #India #EV #Automotive #Mobility"
     },
     "Wednesday": {
         "title": "R&D, SPACETECH & SEMICONDUCTORS",
@@ -85,7 +87,7 @@ WEEKLY_TOPICS = {
             "- India: ₹76,000 Crore Semicon India program with Tata Electronics (Dholera & Morigaon) and Micron (Sanand) fabs under construction (Source: Press Information Bureau India)\n"
             "- India: ISRO commercial LEO launches via NewSpace India Limited (NSIL) and IN-SPACe private ecosystem expansion (Source: ISRO / PIB India)"
         ),
-        "hashtags": "#AshwanthKaribindi #Bristlecone #GenAI #SAP #EnterpriseAI #Innovation #Leadership #GlobalEconomy #India #SpaceTech #Semiconductors #DeepTech"
+        "hashtags": f"{DEFAULT_AUTHOR_TAGS} #GenAI #SAP #EnterpriseAI #Innovation #Leadership #GlobalEconomy #India #SpaceTech #Semiconductors #DeepTech"
     },
     "Thursday": {
         "title": "FINANCE, MACROECONOMICS & GIFT CITY",
@@ -103,7 +105,7 @@ WEEKLY_TOPICS = {
             "- India: Robust monthly GST collections consistently exceeding ₹1.8 Lakh Crore (Source: Ministry of Finance)\n"
             "- India: GIFT City IFSC scaling international banking, aircraft leasing, and cross-border fund inflows (Source: IFSCA / PIB India)"
         ),
-        "hashtags": "#AshwanthKaribindi #Bristlecone #GenAI #SAP #EnterpriseAI #Innovation #Leadership #GlobalEconomy #India #Finance #Macroeconomics #GIFTCity"
+        "hashtags": f"{DEFAULT_AUTHOR_TAGS} #GenAI #SAP #EnterpriseAI #Innovation #Leadership #GlobalEconomy #India #Finance #Macroeconomics #GIFTCity"
     },
     "Friday": {
         "title": "GEOPOLITICS, ENERGY & TRADE CORRIDORS",
@@ -120,7 +122,7 @@ WEEKLY_TOPICS = {
             "- India: IMEC (India-Middle East-Europe Economic Corridor) trade and connectivity framework (Source: Ministry of External Affairs / PIB India)\n"
             "- India: National Green Hydrogen Mission and domestic solar manufacturing scale-up under PLI (Source: Ministry of New & Renewable Energy / PIB India)"
         ),
-        "hashtags": "#AshwanthKaribindi #Bristlecone #GenAI #SAP #EnterpriseAI #Innovation #Leadership #GlobalEconomy #India #Geopolitics #SupplyChain #TradeCorridors"
+        "hashtags": f"{DEFAULT_AUTHOR_TAGS} #GenAI #SAP #EnterpriseAI #Innovation #Leadership #GlobalEconomy #India #Geopolitics #SupplyChain #TradeCorridors"
     },
     "Saturday": {
         "title": "WEEKLY STRATEGIC INDIA SYNTHESIS",
@@ -136,7 +138,7 @@ WEEKLY_TOPICS = {
             "- Tailwinds: Semicon India ₹76,000 Cr PLI, ₹10,372 Cr IndiaAI Mission, ₹1.8L Cr GST monthly benchmark, GIFT City IFSC capital bridge (Sources: PIB India, RBI, MeitY)\n"
             "- Headwinds: Advanced GPU import dependency, baseload green energy demand for compute infrastructure, global trade policy uncertainties (Sources: IEA, Gartner, World Bank)"
         ),
-        "hashtags": "#AshwanthKaribindi #Bristlecone #GenAI #SAP #EnterpriseAI #Innovation #Leadership #GlobalEconomy #India #StrategicSynthesis #Macroeconomics"
+        "hashtags": f"{DEFAULT_AUTHOR_TAGS} #GenAI #SAP #EnterpriseAI #Innovation #Leadership #GlobalEconomy #India #StrategicSynthesis #Macroeconomics"
     }
 }
 
@@ -191,7 +193,9 @@ class PostGenerator:
             raise ValueError("Groq API key ('groq_api') not found in environment variables.")
         self.endpoint = "https://api.groq.com/openai/v1/chat/completions"
         self.model = "openai/gpt-oss-120b"
-        self.author_line = "✍️ Author: Ashwanth Karibindi | Principal - SAP Gen AI Solution Architect, Bristlecone, Bangalore"
+        self.author_name = (os.getenv("AUTHOR_NAME") or "Author").strip()
+        self.author_title = (os.getenv("AUTHOR_TITLE") or "Enterprise Solution Architect").strip()
+        self.author_line = (os.getenv("AUTHOR_LINE") or f"✍️ Author: {self.author_name} | {self.author_title}").strip()
 
     def generate_post_for_day(self, day_name=None, max_chars=2600, archived_posts=None):
         """Generate a LinkedIn post tailored to the 6-day single-topic deep dive schedule."""
@@ -227,7 +231,7 @@ class PostGenerator:
             "3. MUST include explicit primary source attributions in parentheses (e.g. (Source: Press Information Bureau India), (Source: RBI), (Source: Reuters), (Source: Bloomberg), (Source: Gartner)).\n"
             "4. STRICT FACTUAL ACCURACY: Ground all claims in established real-world industry benchmarks and official government initiatives. Do NOT fabricate specific arbitrary grant amounts (e.g. '$1.4 bn'), exact fictional facility numbers, or ungrounded battery line specs. Use the provided benchmark anchors directly.\n"
             "5. If today corresponds to an occasion, festival, or historic event, open with a respectful 1-sentence executive tribute before the deep dive.\n"
-            "6. NEVER mention EarEase Tech or company bios.\n"
+            "6. NEVER mention personal company bios, corporate advertisements, or unverified affiliations.\n"
             "7. Keep the content strictly factual, credible, and executive."
         )
 
@@ -311,7 +315,7 @@ CRITICAL CONSTRAINTS:
             "2. NO URLs or external links.\n"
             "3. MUST include explicit primary source attributions in parentheses.\n"
             "4. If today corresponds to an occasion, festival, or historic event, open with a respectful 1-sentence executive tribute before the synthesis.\n"
-            "5. NEVER mention EarEase Tech or company bios.\n"
+            "5. NEVER mention personal company bios, corporate advertisements, or unverified affiliations.\n"
             "6. Structure with clear Tailwinds/Pros and Headwinds/Cons for India."
         )
 
@@ -406,9 +410,10 @@ CRITICAL CONSTRAINTS:
         # 1. Strip reasoning tags
         text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
 
-        # 2. Strip EarEase Tech or legacy brand mentions if any model hallucinated it
-        text = re.sub(r'(?i)earease\s*tech(\s*pvt\s*ltd)?', 'Bristlecone', text)
-        text = re.sub(r'(?i)founder\s*&\s*ceo[,\s]*earease\s*tech', 'Principal - SAP Gen AI Solution Architect, Bristlecone', text)
+        # 2. Strip legacy brand mentions if any model hallucinated it
+        brand_name = (os.getenv("BRAND_NAME") or "Enterprise").strip()
+        text = re.sub(r'(?i)earease\s*tech(\s*pvt\s*ltd)?', brand_name, text)
+        text = re.sub(r'(?i)founder\s*&\s*ceo[,\s]*earease\s*tech', f"{self.author_title}, {brand_name}", text)
 
         # 3. Strip raw markdown bold, italics, headers (require space for headers so hashtags are safe)
         text = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
@@ -447,7 +452,7 @@ CRITICAL CONSTRAINTS:
             text = re.sub(r'🏷️\s*(?:HASHTAGS:?)?\s*', f'🏷️ {to_unicode_bold("HASHTAGS")}\n', text)
 
         # Ensure author line is correct and prominent
-        if "Ashwanth Karibindi" not in text:
+        if self.author_name not in text:
             # Prepend author line under date line
             lines = text.split("\n")
             if len(lines) > 0 and "📰" in lines[0]:
@@ -456,7 +461,7 @@ CRITICAL CONSTRAINTS:
         else:
             # If model generated a variant of author line, normalize to exact line
             text = re.sub(
-                r'✍️?\s*(?:Author:)?\s*Ashwanth Karibindi[^\n]*',
+                r'✍️?\s*(?:Author:)?\s*' + re.escape(self.author_name) + r'[^\n]*',
                 self.author_line,
                 text
             )

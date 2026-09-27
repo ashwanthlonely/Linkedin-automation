@@ -26,7 +26,7 @@ class ImageGenerator:
         self.hf_token = (os.getenv("huggingface_access_token") or "").strip()
 
     def generate_news_cover_image(self, headline_topic=None, news_summary=None, output_path=None):
-        """Generate a 16:9 1920x1080 premium editorial AI visual data infographic cover image with EarEase Tech logo."""
+        """Generate a 16:9 1920x1080 premium editorial AI visual data infographic cover image with brand logo."""
         if not output_path:
             output_path = os.path.join(self.base_dir, "assets", "generated_cover.jpg")
 
@@ -49,7 +49,7 @@ class ImageGenerator:
         # Method 1: FLUX.1 State-of-the-Art AI Engine (75s Timeout)
         flux_img = self._generate_flux_image(prompt)
         if flux_img:
-            final_img = self._overlay_earease_logo_and_header(flux_img)
+            final_img = self._overlay_brand_logo_and_header(flux_img)
             final_img.save(output_path, quality=95)
             print(f"✅ Generated 16:9 1920x1080 AI Editorial Infographic Cover via FLUX.1 at '{output_path}'")
             return output_path
@@ -58,7 +58,7 @@ class ImageGenerator:
         if self.gemini_key:
             gemini_img = self._generate_gemini_image(prompt)
             if gemini_img:
-                final_img = self._overlay_earease_logo_and_header(gemini_img)
+                final_img = self._overlay_brand_logo_and_header(gemini_img)
                 final_img.save(output_path, quality=95)
                 print(f"✅ Generated Editorial Data Infographic Cover via Gemini API at '{output_path}'")
                 return output_path
@@ -109,8 +109,8 @@ class ImageGenerator:
             pass
         return None
 
-    def _overlay_earease_logo_and_header(self, bg_img):
-        """Overlay EarEase Tech logo & editorial header typography onto 1920x1080 canvas."""
+    def _overlay_brand_logo_and_header(self, bg_img):
+        """Overlay brand logo & editorial header typography onto 1920x1080 canvas."""
         canvas_w, canvas_h = 1920, 1080
         bg_img = bg_img.resize((canvas_w, canvas_h))
 
@@ -124,7 +124,7 @@ class ImageGenerator:
         draw = ImageDraw.Draw(canvas)
         draw.line([(0, header_h - 3), (canvas_w, header_h - 3)], fill=(56, 189, 248), width=3)
 
-        # Paste EarEase Tech Logo
+        # Paste Brand Logo
         logo_x, logo_y = 30, 15
         if os.path.exists(self.logo_path):
             try:
@@ -137,8 +137,9 @@ class ImageGenerator:
         else:
             text_left = 35
 
+        brand_header = (os.getenv("BRAND_HEADER") or "EXECUTIVE INTELLIGENCE  |  GLOBAL & INDIA PULSE").strip()
         date_str = datetime.now().strftime("%B %d, %Y")
-        draw.text((text_left, 20), "EarEase Tech  |  GLOBAL & INDIA EXECUTIVE PULSE", fill=(255, 255, 255))
+        draw.text((text_left, 20), brand_header, fill=(255, 255, 255))
         draw.text((text_left, 60), f"Editorial Data Journalism Infographic (1920x1080 16:9)  •  {date_str}", fill=(56, 189, 248))
 
         return canvas
@@ -161,7 +162,8 @@ class ImageGenerator:
             except Exception:
                 pass
 
-        draw.text((130, 30), "EarEase Tech | Executive News Pulse", fill=(255, 255, 255))
+        brand_header = (os.getenv("BRAND_HEADER") or "EXECUTIVE INTELLIGENCE | GLOBAL & INDIA PULSE").strip()
+        draw.text((130, 30), brand_header, fill=(255, 255, 255))
         return canvas
 
 

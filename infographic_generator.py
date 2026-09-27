@@ -25,13 +25,13 @@ class InfographicGenerator:
         self.news_fetcher = NewsFetcher(base_dir=self.base_dir)
 
     def create_infographic(self, topic_data=None, output_path=None):
-        """Create a News Image Collage Banner compositing news images & EarEase Tech logo."""
+        """Create a News Image Collage Banner compositing news images & brand logo."""
         if not output_path:
             output_path = os.path.join(self.base_dir, "assets", "generated_infographic.jpg")
 
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-        print("🎨 Building News Image Collage Banner with extracted news images & EarEase Tech logo...")
+        print("🎨 Building News Image Collage Banner with extracted news images & brand logo...")
 
         # 1. Fetch extracted news images
         news_images = self.news_fetcher.fetch_latest_news_and_images()
@@ -71,8 +71,9 @@ class InfographicGenerator:
         else:
             text_left = 25
 
+        brand_header = (os.getenv("BRAND_HEADER") or "EXECUTIVE INTELLIGENCE  |  INDIAN MAJOR HEADLINES & GLOBAL PULSE").strip()
         date_str = datetime.now().strftime("%B %d, %Y")
-        draw.text((text_left, 20), "EarEase Tech  |  INDIAN MAJOR HEADLINES & GLOBAL PULSE", fill=text_primary)
+        draw.text((text_left, 20), brand_header, fill=text_primary)
         draw.text((text_left, 54), f"Extracted News Image Collage & Executive Summary  •  {date_str}", fill=cyan_accent)
 
         # 2. Render News Image Tiles Grid (2 rows x 3 cols)
@@ -138,7 +139,8 @@ class InfographicGenerator:
         # 3. Footer Bar
         draw.rectangle([0, canvas_h - footer_h, canvas_w, canvas_h], fill=bg_color)
         draw.line([(0, canvas_h - footer_h), (canvas_w, canvas_h - footer_h)], fill=card_border, width=1)
-        draw.text((25, canvas_h - 28), "EarEase Tech Pvt Ltd  •  Data Science & AI Leadership", fill=text_muted)
+        brand_footer = (os.getenv("BRAND_FOOTER") or "Executive Intelligence  •  Data Science & Leadership").strip()
+        draw.text((25, canvas_h - 28), brand_footer, fill=text_muted)
         draw.text((canvas_w - 260, canvas_h - 28), "Extracted News Image Collage", fill=cyan_accent)
 
         canvas.save(output_path, quality=95)

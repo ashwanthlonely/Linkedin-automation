@@ -2,20 +2,25 @@
 # Runs 'run_post.py --auto-post' Monday through Saturday at 9:00 AM
 
 $taskName = "LinkedIn_Automation_DailyDeepDive"
-$pythonPath = "C:\Users\ashwa\AppData\Local\Programs\Python\Python313\python.exe"
+# Dynamically resolve working directory and script path
+$workDir = if ($PSScriptRoot) { $PSScriptRoot } else { "C:\path\to\your\Linkedin-automation" }
+$scriptPath = Join-Path $workDir "run_post.py"
 
-if (-not (Test-Path $pythonPath)) {
-    $foundPython = Get-Command python, py -ErrorAction SilentlyContinue | Where-Object { Test-Path $_.Source } | Select-Object -First 1
-    if ($foundPython) {
-        $pythonPath = $foundPython.Source
-    } else {
-        Write-Error "Python 3.13 executable not found at '$pythonPath'."
-        exit 1
-    }
+# Dynamically locate Python executable (PATH first, then user's local AppData)
+$foundPython = Get-Command python, py -ErrorAction SilentlyContinue | Where-Object { Test-Path $_.Source } | Select-Object -First 1
+if ($foundPython) {
+    $pythonPath = $foundPython.Source
+} elseif ($env:LOCALAPPDATA -and (Test-Path "$env:LOCALAPPDATA\Programs\Python\Python313\python.exe")) {
+    $pythonPath = "$env:LOCALAPPDATA\Programs\Python\Python313\python.exe"
+} else {
+    # Generic example fallback
+    $pythonPath = "C:\Users\<YOUR_USERNAME>\AppData\Local\Programs\Python\Python313\python.exe"
 }
 
-$workDir = "c:\Users\ashwa\OneDrive\Desktop\Automations\Linkedin automation"
-$scriptPath = Join-Path $workDir "run_post.py"
+if (-not (Test-Path $pythonPath)) {
+    Write-Error "Python executable not found at '$pythonPath'. Please install Python or set the path to your python.exe."
+    exit 1
+}
 
 if (-not (Test-Path $scriptPath)) {
     Write-Error "Script not found at '$scriptPath'."
